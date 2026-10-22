@@ -283,6 +283,18 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
 .plinks a{flex:1 1 200px;text-align:center;text-decoration:none}
 .plinks .wait{flex:1 1 200px;text-align:center;font-size:.92rem;color:var(--muted);background:var(--bg);border-radius:14px;padding:12px}
 .ver{text-align:center;color:var(--muted);font-size:.8rem;margin:28px 0 0}
+/* Discussion V10 : native palette, accessible on mobile and desktop. */
+.chat-ai{font:700 12px var(--body);background:var(--brand-soft);color:var(--brand);padding:4px 8px;border-radius:10px;vertical-align:middle}
+.chat-notice{font-size:14px;line-height:1.55}.chat-notice p:first-child{margin-top:0}.chat-notice p:last-child{margin-bottom:0}
+.chat-consent{display:flex;align-items:flex-start;gap:10px;font-weight:700}.chat-consent input{width:22px;min-width:22px;height:22px;accent-color:var(--brand)}
+.chat-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:14px 0;flex-wrap:wrap}
+.chat-log{display:grid;gap:14px;margin:18px 0}.chat-turn{display:grid;gap:10px;min-width:0}.chat-message{padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow-wrap:anywhere;min-width:0}
+.chat-message.user{margin-left:28px;background:var(--brand-soft)}.chat-message.assistant{margin-right:16px}.chat-message .chat-who{font-size:12px;font-weight:800;color:var(--muted);display:block;margin-bottom:5px}.chat-message p{white-space:pre-wrap;margin:0}
+.chat-sources{padding-left:20px;font-size:13px;margin-bottom:0}.chat-sources a,.chat-date a{color:var(--brand);text-decoration:underline}.chat-date{margin:12px 0 0;padding:10px;border-radius:10px;background:var(--mint-soft);font-size:14px}.chat-date small{display:block;color:var(--muted)}
+.chat-memory,.chat-privacy{font-size:14px;margin-top:16px}.chat-memory summary,.chat-privacy summary{cursor:pointer;font-weight:800;padding:4px 0}.chat-memory li{margin:8px 0;overflow-wrap:anywhere}.chat-privacy{margin-bottom:35px}
+#chat-status[data-error=true]{color:var(--red)}#chat-form button:disabled{opacity:.55;cursor:not-allowed}#chat-form textarea{min-height:95px}#chat-older{margin-top:8px}
+@media(max-width:400px){.chat-message.user{margin-left:14px}.chat-message.assistant{margin-right:8px}.chat-message{padding:12px}}
+
 </style>
 </head>
 <body>
@@ -359,35 +371,41 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
     <div id="v-main"></div>
   </section>
 
-  <!-- CHATGPT -->
+  <!-- CHATGPT : discussion privée V10 -->
   <section id="v-assistant" hidden>
-    <h2>Demander à ChatGPT</h2>
-    <div class="bcard gpt">
-      <label for="g-q">Ta question<textarea id="g-q" rows="4" placeholder="Par exemple : qu'est-ce que je fais cette semaine ?"></textarea></label>
-      <label for="g-sujet">C'est à propos de<select id="g-sujet">
-        <option value="general">Mes candidatures en général</option>
-        <option value="textes">Mes textes de candidature</option>
-        <option value="hku">HKU</option>
-        <option value="hkbu">HKBU</option>
-        <option value="cityu">CityUHK</option>
-        <option value="waseda">Waseda</option>
-        <option value="autres">Les autres pistes (Keio, Sophia, Sciences Po…)</option>
+    <h2>Mon assistant études <span class="chat-ai">IA</span></h2>
+    <div class="bcard chat-notice">
+      <p>Je suis une intelligence artificielle proposée avec OpenAI. Je t’aide pour tes études, tes universités et ta vie étudiante. Je peux me tromper.</p>
+      <p><strong>Papa peut lire tes échanges et les signalements de sécurité.</strong> Les messages sont conservés 180 jours ; les informations scolaires utiles restent en mémoire jusqu’au 1er octobre 2027. Tu peux tout effacer ici. Le contenu nécessaire à la réponse est transmis à OpenAI ; ce service peut conserver des journaux de sécurité selon ses règles.</p>
+      <p>Garde tes mots de passe, documents d’identité et coordonnées bancaires pour papa. Pour une candidature, je t’aide à réfléchir et à relire ; tu écris toi-même ton texte. Les rappels ne sont pas encore activés.</p>
+      <label class="chat-consent"><input type="checkbox" id="chat-consent"> J’ai compris que c’est une IA et que papa peut relire mes échanges.</label>
+    </div>
+    <div class="chat-tools"><button class="btn" type="button" id="chat-refresh">Actualiser</button><span id="chat-budget" class="gtip"></span></div>
+    <p id="chat-status" role="status" aria-live="polite" class="gtip">La discussion se charge quand tu ouvres cet onglet.</p>
+    <p id="chat-safety" class="banner" hidden>Un échange mérite d’être relu avec papa. Ce signalement reste dans l’historique ; aucun message d’alerte n’est envoyé automatiquement.</p>
+    <button class="btn" type="button" id="chat-older" hidden>Messages précédents</button>
+    <div id="chat-log" class="chat-log" role="log" aria-label="Discussion études" aria-live="polite" aria-relevant="additions"></div>
+    <form id="chat-form" class="bcard gpt">
+      <label for="g-sujet">C’est à propos de<select id="g-sujet">
+        <option value="general">Mes études et candidatures</option><option value="textes">Mes textes de candidature</option>
+        <option value="hku">HKU</option><option value="hkbu">HKBU</option><option value="cityu">CityUHK</option>
+        <option value="waseda">Waseda</option><option value="keio">Keio</option><option value="sophia">Sophia</option>
+        <option value="apu">APU</option><option value="yonsei">Yonsei UIC</option><option value="nyu">NYU Shanghai</option>
+        <option value="sciencespo">Sciences Po</option><option value="parcoursup">Parcoursup</option>
       </select></label>
-      <a class="btn gbig" id="g-go" href="https://chatgpt.com/" target="_blank" rel="noopener" aria-disabled="true">Ouvrir dans ChatGPT</a>
-      <p class="gtip" id="g-msg">ChatGPT s'ouvre avec ta question et ce qu'il faut savoir sur ton dossier (tes dates, tes étapes, l'université choisie).</p>
-    </div>
-    <h2>Idées de questions</h2>
+      <label for="g-q">Ton message<textarea id="g-q" rows="3" maxlength="2000" placeholder="Par exemple : aide-moi à préparer mes questions pour le lycée." aria-describedby="chat-help" required></textarea></label>
+      <p id="chat-help" class="gtip">2 000 caractères maximum. Les réponses apparaissent ici, dans ton application.</p>
+      <button class="btn gbig" id="g-go" type="submit" disabled>Envoyer</button>
+    </form>
     <div class="sugg" id="sugg">
-      <button type="button" data-s="general">Qu'est-ce que je fais cette semaine ?</button>
-      <button type="button" data-s="general">Dans quel ordre j'envoie mes dossiers ?</button>
-      <button type="button" data-s="general">Qu'est-ce que je demande au lycée ?</button>
-      <button type="button" data-s="textes">Aide-moi à trouver des idées pour mon personal statement</button>
-      <button type="button" data-s="hkbu">HKU ou HKBU, quelle différence ?</button>
+      <button type="button" data-s="general">Quelle étape de mon dossier puis-je préparer ?</button>
+      <button type="button" data-s="general">Comment préparer mon IELTS ?</button>
+      <button type="button" data-s="textes">Pose-moi des questions pour trouver mes idées de candidature.</button>
     </div>
-    <div class="banner">ChatGPT t'aide pour tes textes, mais c'est toi qui les écris : Waseda interdit les textes écrits par une IA. Pour une date importante, vérifie aussi sur le site de l'université.</div>
-    <p class="gtip" style="padding-bottom:110px">Si ChatGPT s'ouvre sans ta question : tout est déjà copié, appuie longuement dans la case de ChatGPT et choisis « Coller ».</p>
+    <details class="bcard chat-memory"><summary>Ce que l’assistant retient de nos échanges</summary><p class="gtip">Des faits scolaires tirés de tes messages. Ton dossier de candidatures est aussi relu à chaque réponse.</p><ul id="chat-memory"></ul></details>
+    <details class="bcard chat-privacy"><summary>Effacer la discussion et sa mémoire</summary><p>Cela efface les échanges de Lou et de papa et les souvenirs tirés de ces échanges. Les universités, les notes et les étapes de ton dossier restent intactes. Le compteur de dépenses est conservé.</p><button class="btn" type="button" id="chat-forget">Tout effacer dans la discussion</button></details>
   </section>
-  <p class="ver">Lou Parcours V9</p>
+  <p class="ver">Lou Parcours V10</p>
 </main>
 
 <button class="fab" id="fab" type="button" aria-label="Ajouter une étape">+</button>
@@ -740,7 +758,7 @@ function openGal(v,start){
 $("#gal-close").onclick=()=>$("#gal-dlg").close();
 
 /* ---------- onglets ---------- */
-function show(v){document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));["carnet","frise","unis","budget","vie","assistant"].forEach(x=>$("#v-"+x).hidden=x!==v);$("#fab").hidden=v==="assistant"||v==="budget"||v==="vie"||!canWrite;window.scrollTo({top:0});try{localStorage.setItem("lp2-tab",v)}catch(e){}}
+function show(v){if(v==="assistant")scheduleChatLoad();document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));["carnet","frise","unis","budget","vie","assistant"].forEach(x=>$("#v-"+x).hidden=x!==v);$("#fab").hidden=v==="assistant"||v==="budget"||v==="vie"||!canWrite;window.scrollTo({top:0});try{localStorage.setItem("lp2-tab",v)}catch(e){}}
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>show(b.dataset.v));
 try{const t=localStorage.getItem("lp2-tab");if(t)show(t)}catch(e){}
 if(location.hash==="#assistant")show("assistant");
@@ -812,50 +830,76 @@ render();
 setInterval(()=>{if(!document.hidden)load()},60e3);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
 
-/* ---------- onglet ChatGPT ---------- */
-const GPT_RULES="Tu aides Lou, lycéenne en Terminale au lycée français de Vientiane (Laos), à préparer ses candidatures universitaires (rentrée septembre 2027). Réponds en français, en la tutoyant, avec des mots simples et chaleureux, sans flatterie : 3 à 8 phrases ou une petite liste. Appuie-toi d'abord sur les informations ci-dessous ; si une information manque, dis-le et conseille de vérifier sur le site officiel de l'université ou de demander à papa. N'invente jamais une date, un code ou une exigence. Pour ses textes de candidature (personal statement, applicant statement, essays de Waseda) : aide-la à trouver des idées, à faire un plan, pose-lui des questions et corrige ce qu'ELLE a écrit, mais n'écris jamais le texte ni un paragraphe entier à sa place, même si elle insiste (Waseda interdit les textes écrits par une IA). Argent, paiements, mots de passe, passeport : renvoie vers papa. Si elle paraît stressée, rassure-la et propose une seule prochaine étape simple.";
-const SUJETS={general:["Ordre conseillé","Ce qu'il faut demander au lycée"],textes:["Qui est Lou","Ordre conseillé"],hku:["HKU"],hkbu:["HKBU"],cityu:["CityUHK"],waseda:["Waseda"],autres:["Les autres pistes"]};
-function kbParts(){const o={};KB.split(/\n(?=## )/).forEach(s=>{const m=s.match(/^## (.+)/);if(m)o[m[1]]=s.trim()});return o}
-function kbFor(sujet){const P=kbParts(),want=SUJETS[sujet]||[];return Object.keys(P).filter(h=>want.some(w=>h.startsWith(w))).map(h=>P[h])}
-function etatCourt(sujet,max){
-  const t=todayD().toISOString().slice(0,10);
-  let fs=FICHES.filter(isOpen);
-  if(["hku","hkbu","cityu","waseda"].includes(sujet))fs=fs.filter(f=>f.univ===sujet||f.univ==="commun");
-  fs=fs.sort(byDate).slice(0,max);
-  const favs=PARCOURS.filter(p=>p.fav).map(p=>p.court||p.nom);
-  const pu=uniOf(sujet),manque=pu?piecesOf(pu).filter(x=>x.statut!=="ok").map(x=>x.nom):[];
-  return `Aujourd'hui (Vientiane) : ${t}.\n`+(manque.length?`Pièces qui me manquent encore pour ${pu.court||pu.nom} : ${manque.join(" ; ")}.\n`:"")+`Mes prochaines étapes (pas encore faites) :\n`+fs.map(f=>{const p=uniOf(f.univ);return `- ${f.titre} (${p?(p.court||p.nom):"toutes"} ; ${f.date?fd(f.date)+(f.nature==="officielle"?", date officielle":", objectif"):"sans date"}${f.statut==="en_cours"?" ; en cours":""})`}).join("\n")+(favs.length?`\nMes universités favorites : ${favs.join(", ")}.`:"");
-}
-function buildPrompt(q,sujet,full){
-  const head=GPT_RULES,ask="\n\nMA QUESTION : "+q;
-  const kb=kbFor(sujet);
-  const mk=(kbs,n)=>head+(kbs.length?`\n\nINFORMATIONS (relevées sur les sites officiels le ${KB_DATE}) :\n`+kbs.join("\n\n"):"")+"\n\n"+etatCourt(sujet,n)+ask;
-  if(full)return mk(kb,15);
-  for(const n of [15,10,6,3]){const p=mk(kb,n);if(encodeURIComponent(p).length<7500)return p}
-  let kbs=kb.slice();
-  while(kbs.length){const p=mk(kbs,3);if(encodeURIComponent(p).length<7500)return p;kbs=[kbs[0].slice(0,Math.floor(kbs[0].length*0.7))].concat(kbs.slice(1,-1))}
-  return mk([],3);
-}
+/* ---------- discussion études V10 ---------- */
+const CHAT_NOTICE="lou-v10-2026-10-22";
 const gq=$("#g-q"),gs=$("#g-sujet"),go=$("#g-go");
-function updGpt(){
-  const q=gq.value.trim();
-  if(!q){go.setAttribute("aria-disabled","true");go.href="https://chatgpt.com/";return}
-  go.removeAttribute("aria-disabled");
-  go.href="https://chatgpt.com/?q="+encodeURIComponent(buildPrompt(q,gs.value,false));
+let chatBusy=false,chatLoading=false,chatReady=false,chatTurns=[],chatAttempt=null,chatBudget=null;
+try{$("#chat-consent").checked=localStorage.getItem("lou-chat-notice")===CHAT_NOTICE}catch(e){}
+function chatStatus(text,error=false){const el=$("#chat-status");el.textContent=text;el.dataset.error=String(error)}
+function updGpt(){go.disabled=chatBusy||!chatReady||!$("#chat-consent").checked||!gq.value.trim()||!KEY;go.textContent=chatBusy?"Réponse en préparation…":"Envoyer"}
+function scheduleChatLoad(){setTimeout(()=>{if(!$("#v-assistant").hidden&&!chatLoading&&!chatBusy)chatLoad()},0)}
+async function chatCall(body){
+  const r=await fetch(SB_URL+"/functions/v1/lou-chat",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify({key:KEY,...body}),signal:AbortSignal.timeout(140000)});
+  let data;try{data=await r.json()}catch(e){throw new Error("L’assistant n’est pas encore disponible. Tes autres onglets restent accessibles.")}
+  if(!r.ok){const e=new Error(data.message||"La discussion n’a pas pu se charger. Réessaie plus tard.");e.code=data.error;e.definitive=!['pending','unavailable'].includes(data.error);throw e}return data;
 }
-gq.addEventListener("input",updGpt);gs.addEventListener("change",updGpt);
-go.addEventListener("click",ev=>{
-  const q=gq.value.trim();if(!q){ev.preventDefault();gq.focus();return}
-  updGpt();
-  const txt=buildPrompt(q,gs.value,true);
-  try{navigator.clipboard&&navigator.clipboard.writeText(txt).catch(()=>{})}catch(e){}
-  $("#g-msg").textContent="ChatGPT s'ouvre. Ta question et ton dossier sont aussi copiés : si la case est vide, colle-les.";
+function chatURL(raw){try{const u=new URL(raw);return u.protocol==="https:"&&!u.username&&!u.password?u.href:null}catch(e){return null}}
+function chatSourceLink(source){const a=document.createElement("a"),url=chatURL(source.url);a.textContent=source.title||"Site officiel";if(url){a.href=url;a.target="_blank";a.rel="noopener noreferrer"}return a}
+function renderChat(){
+ const log=$("#chat-log");log.replaceChildren();
+ if(!chatTurns.length){const empty=document.createElement("p");empty.className="empty";empty.textContent="Pose ta première question sur tes études. Je relirai ton dossier pour t’aider.";log.append(empty)}
+ chatTurns.forEach(t=>{
+   const turn=document.createElement("article");turn.className="chat-turn";
+   for(const [who,cls,text] of [["Toi ou papa","user",t.user_text],["Assistant études · IA","assistant",t.answer]]){
+     const box=document.createElement("div");box.className="chat-message "+cls;
+     const label=document.createElement("span");label.className="chat-who";
+     const date=new Date(t.created_at);label.textContent=who+(Number.isFinite(+date)?" · "+new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Vientiane"}).format(date):"");
+     const p=document.createElement("p");p.textContent=text||"";box.append(label,p);
+     if(cls==="assistant"){
+       (t.dates||[]).forEach(d=>{const card=document.createElement("div");card.className="chat-date";const title=document.createElement("strong");title.textContent=d.label+" : "+(/^\d{4}-\d{2}-\d{2}$/.test(d.date)?new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(d.date+"T00:00:00Z")):d.date);const meta=document.createElement("small");meta.textContent="Date relevée sur la page officielle le "+String(d.checked_at||"").slice(0,10)+". Vérifie le programme et l’heure avant l’envoi.";card.append(title,meta,chatSourceLink({title:"Voir la source officielle",url:d.url}));box.append(card)});
+       if(t.sources?.length){const ul=document.createElement("ul");ul.className="chat-sources";t.sources.forEach(s=>{const li=document.createElement("li");li.append(chatSourceLink(s));ul.append(li)});box.append(ul)}
+     }turn.append(box);
+   }log.append(turn);
+ });
+ $("#chat-safety").hidden=!chatTurns.some(t=>t.safety_flag&&t.safety_flag!=="parent");
+}
+function renderChatMemory(memories){const list=$("#chat-memory");list.replaceChildren();(memories||[]).forEach(m=>{const li=document.createElement("li");li.textContent=m.fact;list.append(li)});if(!list.children.length){const li=document.createElement("li");li.textContent="Pas encore de souvenir enregistré à partir de nos échanges.";list.append(li)}}
+async function chatLoad(older=false){
+ if(!KEY||chatLoading||chatBusy)return;
+ chatLoading=true;$("#chat-refresh").disabled=true;$("#chat-older").disabled=true;
+ try{const first=chatTurns[0]?.seq,d=await chatCall({action:"history",...(older&&first?{before:first}:{})});
+   chatTurns=older?[...d.history,...chatTurns]:d.history;chatTurns=Array.from(new Map(chatTurns.map(t=>[t.id,t])).values()).sort((a,b)=>a.seq-b.seq);
+   chatBudget=d.budget;chatReady=!!d.budget?.enabled;
+   $("#chat-budget").textContent=d.budget?"Budget du mois : "+Number(d.budget.used_usd).toFixed(2)+" $ / "+Number(d.budget.limit_usd).toFixed(2)+" $":"";
+   $("#chat-older").hidden=!d.has_more;renderChat();renderChatMemory(d.memories);
+   chatStatus(chatReady?"Ta discussion est prête.":"L’assistant est en préparation. Les autres onglets restent disponibles.");
+ }catch(e){chatReady=false;chatStatus(e.message||"Vérifie ta connexion puis réessaie.",true)}
+ finally{chatLoading=false;$("#chat-refresh").disabled=false;$("#chat-older").disabled=false;updGpt()}
+}
+$("#chat-consent").onchange=()=>{try{if($("#chat-consent").checked)localStorage.setItem("lou-chat-notice",CHAT_NOTICE);else localStorage.removeItem("lou-chat-notice")}catch(e){}updGpt()};
+gq.addEventListener("input",()=>{chatAttempt=null;updGpt()});gs.addEventListener("change",()=>{chatAttempt=null;updGpt()});
+$("#chat-refresh").onclick=()=>chatLoad();$("#chat-older").onclick=()=>chatLoad(true);
+$("#chat-form").addEventListener("submit",async ev=>{
+ ev.preventDefault();const message=gq.value.trim();if(chatBusy||!chatReady||!$("#chat-consent").checked||!message||!KEY)return;
+ if(message.length>2000){chatStatus("Ton message est trop long : garde au maximum 2 000 caractères.",true);return}
+ if(!chatAttempt)chatAttempt={request_id:crypto.randomUUID(),message,topic:gs.value};
+ chatBusy=true;gq.disabled=true;gs.disabled=true;$("#chat-forget").disabled=true;updGpt();chatStatus("Je relis ton dossier et prépare une réponse…");
+ try{const d=await chatCall({action:"message",notice_version:CHAT_NOTICE,...chatAttempt});
+   if(!chatTurns.some(t=>t.id===d.turn.id))chatTurns.push(d.turn);renderChat();gq.value="";chatAttempt=null;
+   try{const latest=await chatCall({action:"history"});renderChatMemory(latest.memories);chatBudget=latest.budget;$("#chat-budget").textContent="Budget du mois : "+Number(latest.budget.used_usd).toFixed(2)+" $ / "+Number(latest.budget.limit_usd).toFixed(2)+" $"}catch(e){}
+   chatStatus("Réponse enregistrée. Papa peut la relire ici.");$("#chat-log").lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"});
+ }catch(e){chatStatus(e.message||"La réponse n’est pas arrivée. Ton texte est conservé ; réessaie dans un instant.",true);if(e.definitive)chatAttempt=null}
+ finally{chatBusy=false;gq.disabled=false;gs.disabled=false;$("#chat-forget").disabled=false;updGpt()}
 });
-document.querySelectorAll("#sugg button").forEach(b=>b.onclick=()=>{gq.value=b.textContent;gs.value=b.dataset.s||"general";updGpt();gq.scrollIntoView({block:"center",behavior:"smooth"})});
-updGpt();
+$("#chat-forget").onclick=async()=>{
+ if(chatBusy)return;if(!confirm("Effacer tous les échanges et les souvenirs de cette discussion, pour Lou et papa ? Le dossier universitaire reste intact."))return;
+ chatBusy=true;updGpt();
+ try{await chatCall({action:"forget",confirm:"EFFACER"});chatTurns=[];chatAttempt=null;renderChat();renderChatMemory([]);chatStatus("La discussion et ses souvenirs ont été effacés. Ton dossier reste intact.")}
+ catch(e){chatStatus(e.message||"L’effacement n’a pas abouti. Réessaie plus tard.",true)}finally{chatBusy=false;updGpt()}
+};
+document.querySelectorAll("#sugg button").forEach(b=>b.onclick=()=>{if(chatBusy)return;gq.value=b.textContent;gs.value=b.dataset.s||"general";chatAttempt=null;updGpt();gq.focus()});
+updGpt();scheduleChatLoad();
 
 </script>
 
 </body></html>
-</body>
-</html>
