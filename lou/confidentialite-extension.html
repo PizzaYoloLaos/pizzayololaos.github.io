@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Confidentialité — Lou Parcours</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f3f1fb;--card:#fff;--ink:#221d3a;--muted:#6c6787;--brand:#5b4bd6;--line:#e6e2f3}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141225;--card:#1f1c36;--ink:#f1efff;--muted:#a7a2c4;--brand:#a89bff;--line:#2f2b4d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141225;--card:#1f1c36;--ink:#f1efff;--muted:#a7a2c4;--brand:#a89bff;--line:#2f2b4d;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+article{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px}
+h1{font-size:1.5rem;line-height:1.25;margin:0 0 4px}
+h2{font-size:1.15rem;margin:22px 0 6px}
+p,li{margin:6px 0}
+small{color:var(--muted)}
+a{color:var(--brand)}
+</style>
+</head>
+<body>
+<main>
+<h1>Lou Parcours — Aide sur la page</h1>
+<small>Règles de confidentialité de l'extension Chrome · version du 23 octobre 2026</small>
+
+<article lang="fr">
+<h2>À quoi sert l'extension</h2>
+<p>Elle est réservée à une seule famille : elle aide une lycéenne à comprendre les pages de candidature universitaire qu'elle ouvre. Elle ne remplit aucun formulaire et n'envoie rien aux universités.</p>
+<h2>Ce qui est lu, et quand</h2>
+<ul>
+<li>Seulement quand l'utilisatrice pose une question, et seulement sur une liste fermée de sites d'universités et de candidature (HKU, HKBU, CityUHK, Waseda, Keio, Sophia, APU, Yonsei, NYU, Parcoursup, Sciences Po, Common App, TAO, IELTS).</li>
+<li>Le titre de la page, ses intitulés, ses messages d'erreur et son texte visible, avec, pour chaque case du formulaire, son intitulé et l'indication « vide » ou « rempli ».</li>
+<li><strong>Jamais le contenu des cases</strong> (ce qui a été tapé), jamais les mots de passe. Les lignes qui affichent une donnée personnelle (passeport, date de naissance, adresse, téléphone, courriel, numéro de dossier…) sont retirées avant l'envoi. L'utilisatrice peut voir exactement ce qui part.</li>
+</ul>
+<h2>Où vont ces informations</h2>
+<ul>
+<li>Vers le serveur privé de l'application Lou Parcours (Supabase), qui pose la question à un modèle d'IA d'OpenAI, avec un contrôle de sécurité. OpenAI ne conserve pas les échanges pour cet usage (option « store: false »).</li>
+<li>La question et la réponse sont enregistrées dans la discussion de l'application, que le parent peut relire. Elles sont effacées automatiquement après 180 jours, ou à tout moment avec le bouton « Effacer ».</li>
+<li>Le lien privé de l'application est gardé uniquement dans le navigateur (stockage local de l'extension).</li>
+<li>Aucune donnée n'est vendue, partagée à des fins publicitaires, ni utilisée pour autre chose que cette aide aux études.</li>
+</ul>
+<h2>Contact</h2>
+<p>Jean-Paul Duvergé — <a href="mailto:khounboulom@gmail.com">khounboulom@gmail.com</a></p>
+</article>
+
+<article lang="en">
+<h2>Privacy policy (English)</h2>
+<p>This extension is for private family use. It helps a student understand university application pages she opens. It never fills in or submits forms.</p>
+<p><strong>What is read:</strong> only when the user asks a question, and only on a fixed list of university and application websites: page title, headings, error messages, visible text, and for each form field its label and whether it is empty or filled. Field contents and passwords are never read. Lines showing personal data are removed before sending, and the user can preview what is sent.</p>
+<p><strong>Where it goes:</strong> to the private Lou Parcours server (Supabase), which asks an OpenAI model (with moderation, store disabled). The question and answer are kept in the app's conversation, readable by the parent, deleted after 180 days or on request. The private app link is stored only in the extension's local storage. No data is sold, used for advertising, or used for any other purpose.</p>
+<p><strong>Contact:</strong> Jean-Paul Duvergé — <a href="mailto:khounboulom@gmail.com">khounboulom@gmail.com</a></p>
+</article>
+</main>
+</body>
+</html>
