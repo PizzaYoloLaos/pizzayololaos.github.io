@@ -405,7 +405,7 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
     <details class="bcard chat-memory"><summary>Ce que l’assistant retient de nos échanges</summary><p class="gtip">Des faits scolaires tirés de tes messages. Ton dossier de candidatures est aussi relu à chaque réponse.</p><ul id="chat-memory"></ul></details>
     <details class="bcard chat-privacy"><summary>Effacer la discussion et sa mémoire</summary><p>Cela efface les échanges de Lou et de papa et les souvenirs tirés de ces échanges. Les universités, les notes et les étapes de ton dossier restent intactes. Le compteur de dépenses est conservé.</p><button class="btn" type="button" id="chat-forget">Tout effacer dans la discussion</button></details>
   </section>
-  <p class="ver">Lou Parcours V10</p>
+  <p class="ver">Lou Parcours V11</p>
 </main>
 
 <button class="fab" id="fab" type="button" aria-label="Ajouter une étape">+</button>
@@ -446,7 +446,6 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
 let KB_DATE = "10 octobre 2026";
 // Échéances (heure de Vientiane). kind: off = officielle, obj = objectif interne
 const DEADLINES = [
-  {d:"2026-10-24", t:"IELTS", kind:"off"},
   {d:"2026-11-10", t:"Envoyer CityUHK", kind:"obj"},
   {d:"2026-11-12", t:"Envoyer HKBU", kind:"obj"},
   {d:"2026-11-15", t:"CityUHK 1er tour", kind:"off"},
@@ -454,6 +453,7 @@ const DEADLINES = [
   {d:"2026-11-20", t:"Envoyer HKU", kind:"obj"},
   {d:"2026-11-25", t:"HKU 1er tour · 11 h", kind:"off"},
   {d:"2026-12-01", t:"HKU : notes du conseiller", kind:"off"},
+  {d:"2026-12-09", t:"APU : fin de la session", kind:"off"},
   {d:"2026-12-15", t:"Waseda : docs du lycée", kind:"obj"},
   {d:"2027-01-07", t:"Waseda : ouverture", kind:"off"},
   {d:"2027-01-28", t:"Waseda : limite · 15 h", kind:"off"},
