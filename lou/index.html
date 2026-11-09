@@ -377,7 +377,7 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
     <div class="bcard chat-notice">
       <p>Je suis une intelligence artificielle proposée avec OpenAI. Je t’aide pour tes études, tes universités et ta vie étudiante. Je peux me tromper.</p>
       <p><strong>Papa peut lire tes échanges et les signalements de sécurité.</strong> Les messages sont conservés 180 jours ; les informations scolaires utiles restent en mémoire jusqu’au 1er octobre 2027. Tu peux tout effacer ici. Le contenu nécessaire à la réponse est transmis à OpenAI ; ce service peut conserver des journaux de sécurité selon ses règles.</p>
-      <p>Garde tes mots de passe, documents d’identité et coordonnées bancaires pour papa. Pour une candidature, je t’aide à réfléchir et à relire ; tu écris toi-même ton texte. Les rappels ne sont pas encore activés.</p>
+      <p>Garde tes mots de passe, documents d’identité et coordonnées bancaires pour papa. Pour une candidature, je t’aide à réfléchir et à relire ; tu écris toi-même ton texte. Chaque dimanche soir, papa t’envoie aussi par mail le point de ta semaine.</p>
       <label class="chat-consent"><input type="checkbox" id="chat-consent"> J’ai compris que c’est une IA et que papa peut relire mes échanges.</label>
     </div>
     <div class="chat-tools"><button class="btn" type="button" id="chat-refresh">Actualiser</button><span id="chat-budget" class="gtip"></span></div>
@@ -393,8 +393,8 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
         <option value="apu">APU</option><option value="yonsei">Yonsei UIC</option><option value="nyu">NYU Shanghai</option>
         <option value="sciencespo">Sciences Po</option><option value="parcoursup">Parcoursup</option>
       </select></label>
-      <label for="g-q">Ton message<textarea id="g-q" rows="3" maxlength="2000" placeholder="Par exemple : aide-moi à préparer mes questions pour le lycée." aria-describedby="chat-help" required></textarea></label>
-      <p id="chat-help" class="gtip">2 000 caractères maximum. Les réponses apparaissent ici, dans ton application.</p>
+      <label for="g-q">Ton message<textarea id="g-q" rows="3" maxlength="8000" placeholder="Par exemple : aide-moi à préparer mes questions pour le lycée." aria-describedby="chat-help" required></textarea></label>
+      <p id="chat-help" class="gtip">8 000 caractères maximum : tu peux coller ton texte entier pour une relecture (choisis « Mes textes de candidature »). Les réponses apparaissent ici, dans ton application.</p>
       <button class="btn gbig" id="g-go" type="submit" disabled>Envoyer</button>
     </form>
     <div class="sugg" id="sugg">
@@ -405,7 +405,7 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
     <details class="bcard chat-memory"><summary>Ce que l’assistant retient de nos échanges</summary><p class="gtip">Des faits scolaires tirés de tes messages. Ton dossier de candidatures est aussi relu à chaque réponse.</p><ul id="chat-memory"></ul></details>
     <details class="bcard chat-privacy"><summary>Effacer la discussion et sa mémoire</summary><p>Cela efface les échanges de Lou et de papa et les souvenirs tirés de ces échanges. Les universités, les notes et les étapes de ton dossier restent intactes. Le compteur de dépenses est conservé.</p><button class="btn" type="button" id="chat-forget">Tout effacer dans la discussion</button></details>
   </section>
-  <p class="ver">Lou Parcours V11</p>
+  <p class="ver">Lou Parcours V12</p>
 </main>
 
 <button class="fab" id="fab" type="button" aria-label="Ajouter une étape">+</button>
@@ -881,7 +881,7 @@ gq.addEventListener("input",()=>{chatAttempt=null;updGpt()});gs.addEventListener
 $("#chat-refresh").onclick=()=>chatLoad();$("#chat-older").onclick=()=>chatLoad(true);
 $("#chat-form").addEventListener("submit",async ev=>{
  ev.preventDefault();const message=gq.value.trim();if(chatBusy||!chatReady||!$("#chat-consent").checked||!message||!KEY)return;
- if(message.length>2000){chatStatus("Ton message est trop long : garde au maximum 2 000 caractères.",true);return}
+ if(message.length>8000){chatStatus("Ton message est trop long : garde au maximum 8 000 caractères.",true);return}
  if(!chatAttempt)chatAttempt={request_id:crypto.randomUUID(),message,topic:gs.value};
  chatBusy=true;gq.disabled=true;gs.disabled=true;$("#chat-forget").disabled=true;updGpt();chatStatus("Je relis ton dossier et prépare une réponse…");
  try{const d=await chatCall({action:"message",notice_version:CHAT_NOTICE,...chatAttempt});
