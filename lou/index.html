@@ -398,14 +398,14 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
       <button class="btn gbig" id="g-go" type="submit" disabled>Envoyer</button>
     </form>
     <div class="sugg" id="sugg">
-      <button type="button" data-s="general">Quelle étape de mon dossier puis-je préparer ?</button>
-      <button type="button" data-s="general">Comment préparer mon IELTS ?</button>
+      <button type="button" data-s="general">Que dois-je faire cette semaine ?</button>
+      <button type="button" data-s="textes">Relis mon texte et dis-moi ce qui manque (je le colle juste après) : </button>
       <button type="button" data-s="textes">Pose-moi des questions pour trouver mes idées de candidature.</button>
     </div>
     <details class="bcard chat-memory"><summary>Ce que l’assistant retient de nos échanges</summary><p class="gtip">Des faits scolaires tirés de tes messages. Ton dossier de candidatures est aussi relu à chaque réponse.</p><ul id="chat-memory"></ul></details>
     <details class="bcard chat-privacy"><summary>Effacer la discussion et sa mémoire</summary><p>Cela efface les échanges de Lou et de papa et les souvenirs tirés de ces échanges. Les universités, les notes et les étapes de ton dossier restent intactes. Le compteur de dépenses est conservé.</p><button class="btn" type="button" id="chat-forget">Tout effacer dans la discussion</button></details>
   </section>
-  <p class="ver">Lou Parcours V12</p>
+  <p class="ver">Lou Parcours V13</p>
 </main>
 
 <button class="fab" id="fab" type="button" aria-label="Ajouter une étape">+</button>
@@ -444,21 +444,6 @@ button:focus-visible,textarea:focus,select:focus,input:focus{outline:3px solid v
 
 <script>
 let KB_DATE = "10 octobre 2026";
-// Échéances (heure de Vientiane). kind: off = officielle, obj = objectif interne
-const DEADLINES = [
-  {d:"2026-11-10", t:"Envoyer CityUHK", kind:"obj"},
-  {d:"2026-11-12", t:"Envoyer HKBU", kind:"obj"},
-  {d:"2026-11-15", t:"CityUHK 1er tour", kind:"off"},
-  {d:"2026-11-16", t:"HKBU 1er tour", kind:"off"},
-  {d:"2026-11-20", t:"Envoyer HKU", kind:"obj"},
-  {d:"2026-11-25", t:"HKU 1er tour · 11 h", kind:"off"},
-  {d:"2026-12-01", t:"HKU : notes du conseiller", kind:"off"},
-  {d:"2026-12-09", t:"APU : fin de la session", kind:"off"},
-  {d:"2026-12-15", t:"Waseda : docs du lycée", kind:"obj"},
-  {d:"2027-01-07", t:"Waseda : ouverture", kind:"off"},
-  {d:"2027-01-28", t:"Waseda : limite · 15 h", kind:"off"},
-];
-
 let KB = "";
 
 
@@ -524,11 +509,12 @@ function render(){
   if(nx){const n=days(nx.date);$("#next-n").innerHTML=(n===0?"0":n)+"<small>"+(n===0?"aujourd'hui":n===1?"jour":"jours")+"</small>";$("#next-what").textContent=nx.titre;$("#next-when").textContent=F_LONG.format(new Date(nx.date+"T00:00:00Z"))+(nx.heure?" · "+nx.heure:"")+(nx.nature==="officielle"?" · date officielle":"")}
   else if(FICHES.length){$("#next-n").innerHTML="✓<small>bravo</small>";$("#next-what").textContent="Aucune échéance à venir";$("#next-when").textContent=""}
   const pct=active.length?Math.round(100*done.length/active.length):0;
-  $("#prog-txt").textContent=done.length+" / "+active.length+" étapes faites";$("#prog-bar").style.width=pct+"%";
+  const sent=PARCOURS.filter(p=>p.envoyee).length;$("#prog-txt").textContent=done.length+" / "+active.length+" étapes faites"+(sent?" · "+sent+(sent>1?" candidatures envoyées":" candidature envoyée"):"");$("#prog-bar").style.width=pct+"%";
   renderFrise();renderUnis();renderBudget();renderVie();
   const eu=$("#e-univ"),cur=eu.value;eu.innerHTML='<option value="commun">Toutes (démarche commune)</option>'+sortedP().map(p=>`<option value="${esc(p.id)}">${esc(p.court||p.nom)}</option>`).join("");eu.value=cur||"commun";
 }
 const sortedP=()=>PARCOURS.slice().sort((a,b)=>(a.rang||99)-(b.rang||99));
+const shortTxt=t=>{t=String(t||"");return t.length>60?t.slice(0,57).trimEnd()+"…":t};
 
 /* ---------- frise ---------- */
 const PHASES=[{n:"Préparer (tests, documents, textes)",from:"2026-09",to:"2026-10",c:"#3aa0e8"},{n:"Envoyer les dossiers",from:"2026-11",to:"2027-01",c:"#5b4bd6"},{n:"Réponses et entretiens",from:"2027-02",to:"2027-05",c:"#e2558f"},{n:"Choisir et partir",from:"2027-06",to:"2027-09",c:"#14a37f"}];
@@ -567,10 +553,10 @@ function renderUnis(){
     const nx=fs.filter(isOpen).filter(f=>f.date).sort(byDate)[0];
     const c=document.createElement("div");c.className="uni";c.tabIndex=0;c.setAttribute("role","button");
     c.innerHTML=`<div class="top"><div class="badge" style="background:${COLORS[(p.rang-1+COLORS.length)%COLORS.length]}">${esc(initials(p))}</div>
-      <div style="min-width:0"><h3>${esc(p.nom)}</h3><div class="city">${esc(p.programme||"")}</div></div>
+      <div style="min-width:0"><h3>${esc(p.nom)}</h3><div class="city">${esc(p.programme||"")}</div>${p.envoyee?`<span class="chip off" style="display:inline-block;margin-top:6px">Candidature envoyée le ${esc(fd(p.envoyee))} ✓</span>`:""}</div>
       <button class="star" type="button" aria-pressed="${!!p.fav}" aria-label="Favori" ${canWrite?"":"disabled"}>★</button></div>
       ${fs.length?`<div class="ubar"><i style="width:${Math.round(100*done/fs.length)}%"></i></div>`:""}
-      <div class="usmall"><span>${fs.length?done+" / "+fs.length+" étapes":"Pas encore d'étapes"}${(()=>{const s=pieceStats(p);return s.n?" · pièces "+s.ok+" / "+s.n:""})()}</span><span>${nx?esc(countTxt(days(nx.date))):esc(p.statut||"")}</span></div>`;
+      <div class="usmall"><span>${fs.length?done+" / "+fs.length+" étapes":"Pas encore d'étapes"}${(()=>{const s=pieceStats(p);return s.n?" · pièces "+s.ok+" / "+s.n:""})()}</span><span>${p.envoyee?"Envoyée ✓":nx?esc(countTxt(days(nx.date))):esc(shortTxt(p.statut))}</span></div>`;
     c.querySelector(".star").onclick=ev=>{ev.stopPropagation();toggleFav(p)};
     c.onclick=()=>openUni(p); c.onkeydown=ev=>{if(ev.key==="Enter")openUni(p)};
     box.append(c);
@@ -767,7 +753,7 @@ if(location.hash==="#assistant")show("assistant");
 let chain=Promise.resolve();
 function banner(t){$("#db-banner").textContent=t;$("#db-banner").hidden=false}
 let pending=0;
-function write(fn){pending++;chain=chain.then(fn).catch(()=>banner("L'enregistrement n'a pas marché. Vérifie internet et réessaie.")).finally(()=>{pending--});return chain}
+function write(fn){pending++;chain=chain.then(fn).catch(()=>{lastSig="";banner("L'enregistrement n'a pas marché. Vérifie internet et réessaie.")}).finally(()=>{pending--});return chain}
 function toggle(f){if(!KEY||!canWrite)return;const s=f.statut==="fait"?"a_faire":"fait";f.statut=s;render();write(()=>rpc("lou_save_fiche",{p_key:KEY,p_id:f.id,p_data:{statut:s,majLe:new Date().toISOString()}}))}
 function toggleFav(p){if(!KEY||!canWrite)return;p.fav=!p.fav;render();write(()=>rpc("lou_set_fav",{p_key:KEY,p_id:p.id,p_fav:p.fav}))}
 let editing=null;
@@ -777,7 +763,7 @@ $("#edit-form").addEventListener("submit",ev=>{ev.preventDefault();if(!KEY)retur
   const body={titre:$("#e-titre").value.trim(),univ:$("#e-univ").value,date:$("#e-date").value,nature:$("#e-nature").value,statut:$("#e-statut").value,qui:$("#e-qui").value,note:$("#e-note").value.trim(),majLe:new Date().toISOString()};
   if(!body.titre){$("#e-err").textContent="Écris ce qu'il faut faire.";$("#e-err").hidden=false;return}
   $("#edit").close();
-  if(editing){Object.assign(editing,body);render();const id=editing.id;write(()=>rpc("lou_save_fiche",{p_key:KEY,p_id:id,p_data:body}))}
+  if(editing){const id=editing.id;Object.assign(FICHES.find(x=>x.id===id)||editing,body);render();write(()=>rpc("lou_save_fiche",{p_key:KEY,p_id:id,p_data:body}))}
   else{const id="e-"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);const full={...body,creeLe:new Date().toISOString()};FICHES.push({id,...full});render();write(()=>rpc("lou_save_fiche",{p_key:KEY,p_id:id,p_data:full}))}
 });
 
@@ -808,15 +794,18 @@ function setIcon(src){
   if(!src)return draw(null);const im=new Image();im.onload=()=>draw(im);im.onerror=()=>draw(null);im.src=src;
 }
 setIcon("");
-let loadedOnce=false;
+let loadedOnce=false,lastSig="";
 async function load(){
   if(!KEY){lockScreen();return}
   if(pending)return;
   try{
     const d=await rpc("lou_load",{p_key:KEY});
     if(pending)return;
-    FICHES=d.fiches||[];PARCOURS=d.parcours||[];
     const c=d.config||{};
+    // V13 : on ne redessine l'écran que si les données ou le jour ont changé (sinon la page sautait toutes les minutes).
+    const sig=JSON.stringify([d.fiches,d.parcours,c.pieces,todayD().toISOString()]);
+    if(loadedOnce&&sig===lastSig){$("#db-banner").hidden=true;return}
+    lastSig=sig;FICHES=d.fiches||[];PARCOURS=d.parcours||[];
     if(c.photo&&c.photo!==PHOTO){PHOTO=c.photo;setPhoto();setIcon(PHOTO)}
     if(c.kb)KB=c.kb; if(c.kb_date)KB_DATE=c.kb_date; PIECES=c.pieces||{};
     loadedOnce=true;$("#db-banner").hidden=true;render();updGpt();
